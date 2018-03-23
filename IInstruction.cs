@@ -1,6 +1,6 @@
 using System;
 
-public interface IInstruction
+interface IInstruction
 {
-		public uint Bytes{ get; };
+		uint Bytes{ get; }
 }
