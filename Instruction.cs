@@ -20,9 +20,9 @@ public partial class Instruction : IInstruction
 		*/
 		public Instruction(string[] _args)
 		{
-				mName = args[0];
-				for(var i = 1; i < tmp.Length; i++)
-						mArgs.Add(args[i]);
+				mName = _args[0];
+				for(var i = 1; i < _args.Length; i++)
+						mArgs.Add(_args[i]);
 		}
 		public uint Bytes
 		{ 
@@ -30,6 +30,9 @@ public partial class Instruction : IInstruction
 				{
 						uint rv = 0;
 						return rv;
+						/*
+						return mFuncs[mName]();
+						*/
 				}
 		}
 }
