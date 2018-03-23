@@ -5,19 +5,19 @@ public partial class Instruction : IInstruction
 {
 		private string mName;
 		private List<string> mArgs = new List<string>();
-		/*
-		private readonly Dictionary<string, Action> mFuncs =
-				new Dictionary<string, Action>() 
+		
+		private readonly Dictionary<string, Func< List<string>, uint> > FUNCS =
+				new Dictionary<string, Func< List<string>, uint> >() 
 		{
 				{"exit", mExit}, {"swap", mSwap}, {"inpt", mInpt},
-				{"nop", mNop}, {"pop", mPop}, {"add", mAdd},
+				{"nop", mNop}};/* , {"pop", mPop}, {"add", mAdd},
 				{"sub", mSub}, {"mul", mMul}, {"div", mDiv},
 				{"rem", mRem}, {"and", mAnd}, {"or", mOr},
 				{"xor", mXor}, {"neg", mNeg}, {"not", mNot},
 				{"goto", mGoto}, {"if", mIf}, {"dup", mDup},
 				{"print", mPrint}, {"dump", mDump}, {"push", mPush}
-		};
-		*/
+		};*/
+		
 		public Instruction(string[] _args)
 		{
 				mName = _args[0];
@@ -28,11 +28,7 @@ public partial class Instruction : IInstruction
 		{ 
 				get
 				{
-						uint rv = 0;
-						return rv;
-						/*
-						return mFuncs[mName]();
-						*/
+						return FUNCS[mName](mArgs);
 				}
 		}
 }

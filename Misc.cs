@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 public partial class Instruction : IInstruction
 {
-		public uint mExit()
+		static public uint mExit(List<string> mArgs)
 		{
 				if(mArgs.Count > 1) throw new IndexOutOfRangeException();
 				return 0xff & ((mArgs.Count > 0) ? Convert.ToUInt32(mArgs[0]) : 0);
 		}
 
-		public uint mSwap()
+		static public uint mSwap(List<string> mArgs)
 		{
 				return 1 << 24;
 		}
 
-		public uint mInpt()
+		static public uint mInpt(List<string> mArgs)
 		{
 				return 2 << 24;
 		}
 
-		public uint mNop()
+		static public uint mNop(List<string> mArgs)
 		{
 				return 3 << 24;
 		}
