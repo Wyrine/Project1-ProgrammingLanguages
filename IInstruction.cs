@@ -2,5 +2,5 @@ using System;
 
 public interface IInstruction
 {
-		public uint Bytes;
+		public uint Bytes{ get; };
 }
