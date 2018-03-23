@@ -10,13 +10,13 @@ public partial class Instruction : IInstruction
 				new Dictionary<string, Func< List<string>, uint> >() 
 		{
 				{"exit", mExit}, {"swap", mSwap}, {"inpt", mInpt},
-				{"nop", mNop}};/* , {"pop", mPop}, {"add", mAdd},
+				{"nop", mNop} , {"pop", mPop}, {"add", mAdd},
 				{"sub", mSub}, {"mul", mMul}, {"div", mDiv},
 				{"rem", mRem}, {"and", mAnd}, {"or", mOr},
-				{"xor", mXor}, {"neg", mNeg}, {"not", mNot},
+				{"xor", mXor}}/*, {"neg", mNeg}, {"not", mNot},
 				{"goto", mGoto}, {"if", mIf}, {"dup", mDup},
 				{"print", mPrint}, {"dump", mDump}, {"push", mPush}
-		};*/
+		}*/;
 		
 		public Instruction(string[] _args)
 		{
@@ -27,8 +27,10 @@ public partial class Instruction : IInstruction
 		public uint Bytes
 		{ 
 				get
-				{
-						return FUNCS[mName](mArgs);
+				{ 
+						if(! FUNCS.ContainsKey(mName)) 
+								throw new KeyNotFoundException();
+						return FUNCS[mName](mArgs); 
 				}
 		}
 }
