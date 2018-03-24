@@ -1,7 +1,7 @@
-all: Assembly.exe
+all: Assembler.exe
 
-Assembly.exe: *.cs
-		mcs -out:Assembly.exe *.cs
+Assembler.exe: *.cs
+		mcs -out:Assembler.exe *.cs
 
 clean:
 		rm -rf *.exe
