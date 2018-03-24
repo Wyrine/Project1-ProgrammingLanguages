@@ -4,7 +4,10 @@ using System.Collections.Generic;
 
 class Assembler{
 	static int Main(string[] args){
+	Dictionary<string,uint> LabelD = new Dictionary<string,uint>();
 	List<Instruction> IL = new List<Instruction>();
+	List<string[]> StrArrayList = new List<string[]>();
+	uint offset = 0;
 
 		// Check that filename was given on command line
 		if(args.Length == 0){
@@ -32,6 +35,7 @@ class Assembler{
 					// IF HERE STRING CONTAINS A NEW LABEL
 					if(line.IndexOf(":") > 0){
 						line = line.Split(':')[0];
+						LabelD.Add(line,offset);
 					}
 
 					// IF HERE STRING CONTAINS A NEW INSTRUCTION
@@ -39,28 +43,35 @@ class Assembler{
 						// split string into string array containing instruction and its possible arguments
 						string[] prgs = line.Split(new char[]{' ','\t'},StringSplitOptions.RemoveEmptyEntries);
 						
-						IL.Add(new Instruction(prgs));											
-
-						//THIS BLOCK IS TO TEST ALL INSTRUCTIONS AND ARGUMENTS WERE SAVED IN ARRAY
-						//foreach(var prg in prgs){
-						//	Console.Write($"{prg} ");
-						//}
-						//Console.WriteLine();
+						//IL.Add(new Instruction(prgs));
+						StrArrayList.Add(prgs);
+						offset += 4;
 					}
 				}
 			}
 		}
 
-		//THIS BLOCK TESTS THAT ALL INSTRUCTIONS WERE PUT INTO LIST
-		// note: mName and mArgs have to be made public
-		// note: will change list to dictionary once ready to print instructions
-	//	foreach(Instruction instr in IL){
-	//		Console.Write($"{instr.mName} ");
-	//		foreach(string arg in instr.mArgs){
-	//			Console.Write($"{arg} ");
-	//		}
-	//		Console.WriteLine();
-	//	}
+		// Second Pass replaces labels found in instructions
+		// with the address offset from the label dictionary
+		foreach(string[] StrArr in StrArrayList){
+			for(var i = 0; i < StrArr.Length; i++){
+				uint val = 0;
+				if(LabelD.TryGetValue(StrArr[i],out val)){
+					StrArr[i] = val.ToString();
+				}
+			}
+			IL.Add(new Instruction(StrArr));
+		}
+
+	// THIS BLOCK INTERATES THROUGH INSTRUCTION LIST
+	// AFTER ALL LABELS HAVE BEEN REPLACED WIHT OFFSET
+//		foreach(Instruction inst in IL){
+//			Console.Write($"{inst.mName} ");
+//			foreach(string s in inst.mArgs){
+//				Console.Write($"{s} ");
+//			}
+//			Console.WriteLine();
+//		}
 
 		return 0;
 	}
