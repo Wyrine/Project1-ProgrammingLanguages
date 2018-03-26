@@ -63,7 +63,7 @@ class Assembler{
 			IL.Add(new Instruction(StrArr));
 		}
 
-	// THIS BLOCK INTERATES THROUGH INSTRUCTION LIST
+	// THIS BLOCK ITERATES THROUGH INSTRUCTION LIST
 	// AFTER ALL LABELS HAVE BEEN REPLACED WIHT OFFSET
 //		foreach(Instruction inst in IL){
 //			Console.Write($"{inst.mName} ");
@@ -72,6 +72,11 @@ class Assembler{
 //			}
 //			Console.WriteLine();
 //		}
+        using(BinaryWriter bw = new BinaryWriter(File.Open(args[0]+".out",FileMode.Create))) {
+            foreach(Instruction I in IL) {
+                bw.Write(I.Bytes);
+            }
+        }
 
 		return 0;
 	}
