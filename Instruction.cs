@@ -82,7 +82,7 @@ public class Instruction : IInstruction
 				{ 
 						//calls the if function;
 						if(mName.Substring(0, 2) == "if") 
-								return FUNCS["if"](this);
+								return if_block();
 
 						//if the key is not in the dictionary throw an error
 						if(! FUNCS.ContainsKey(mName)) 

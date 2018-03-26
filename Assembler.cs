@@ -1,48 +1,44 @@
 using System;
 using System.IO;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
-class Assembler{
-	static int Main(string[] args){
-	Dictionary<string,uint> LabelD = new Dictionary<string,uint>();
-	List<Instruction> IL = new List<Instruction>();
-	List<string[]> StrArrayList = new List<string[]>();
-	uint offset = 0;
+public class Assembler{
+	public Dictionary<string,uint> LabelD = new Dictionary<string,uint>();
+	public List<Instruction> IL = new List<Instruction>();
+	public List<string[]> StrArrayList = new List<string[]>();
+	private uint offset = 0;
+	private string filename;
 
-		// Check that filename was given on command line
-		if(args.Length == 0){
-			System.Console.WriteLine($"Usage: {System.AppDomain.CurrentDomain.FriendlyName} <filename>"); 
-			return 1;
-		}
-
-		using(StreamReader sr = new StreamReader(args[0])){
+	public Assembler(string fn){
+		filename = fn;
+		using(StreamReader sr = new StreamReader(fn)){
 			while(sr.Peek() >= 0){
 				var line = sr.ReadLine();
 				string[] delimiters = new string[] { "//", "#" };
-				
+
 				// IF HERE SPLIT ON COMMENT CHARS AND TAKE FIRST ENTRY
 				// IF COMMENTS ARE AT END OF LINE THIS WILL RETURN STRING WITHOUT COMMENTS
 				// IF THE ENTIRE LINE IS COMMENTS THEN STRING WILL ONLY CONTAIN WHITESPACE
 				if(line.IndexOf("//") >= 0 || line.IndexOf("#") >= 0){
 					line = line.Split(delimiters,2,StringSplitOptions.None)[0];
 				}
-				
+		
 				// IF TRUE STRING STILL HAS NON-WHITESPACE CHARS
 				if(!String.IsNullOrWhiteSpace(line)){
 					// remove any leading or trailing whitespace
 					line = line.Trim().ToLower();
-
+		
 					// IF HERE STRING CONTAINS A NEW LABEL
 					if(line.IndexOf(":") > 0){
 						line = line.Split(':')[0];
 						LabelD.Add(line,offset);
 					}
-
+		
 					// IF HERE STRING CONTAINS A NEW INSTRUCTION
 					else{
 						// split string into string array containing instruction and its possible arguments
 						string[] prgs = line.Split(new char[]{' ','\t'},StringSplitOptions.RemoveEmptyEntries);
-						
+		
 						//IL.Add(new Instruction(prgs));
 						StrArrayList.Add(prgs);
 						offset += 4;
@@ -51,7 +47,7 @@ class Assembler{
 			}
 		}
 
-		// Second Pass replaces labels found in instructions
+		//Second Pass replaces labels found in instructions
 		// with the address offset from the label dictionary
 		foreach(string[] StrArr in StrArrayList){
 			for(var i = 0; i < StrArr.Length; i++){
@@ -59,25 +55,20 @@ class Assembler{
 				if(LabelD.TryGetValue(StrArr[i],out val)){
 					StrArr[i] = val.ToString();
 				}
+				else if(StrArr[i].IndexOf("0x") == 0){
+					StrArr[i] = Convert.ToUInt32(StrArr[i],16).ToString();
+				}
 			}
 			IL.Add(new Instruction(StrArr));
 		}
+	}
 
-	// THIS BLOCK ITERATES THROUGH INSTRUCTION LIST
-	// AFTER ALL LABELS HAVE BEEN REPLACED WIHT OFFSET
-//		foreach(Instruction inst in IL){
-//			Console.Write($"{inst.mName} ");
-//			foreach(string s in inst.mArgs){
-//				Console.Write($"{s} ");
-//			}
-//			Console.WriteLine();
-//		}
-        using(BinaryWriter bw = new BinaryWriter(File.Open(args[0]+".out",FileMode.Create))) {
-            foreach(Instruction I in IL) {
-                bw.Write(I.Bytes);
-            }
-        }
-
-		return 0;
+	public void WriteOutput(){
+		using(BinaryWriter bw = new BinaryWriter(File.Open(filename+".out",FileMode.Create))) {
+			bw.Write(0xefbeedfe);
+			foreach(Instruction I in IL) {
+				bw.Write(I.Bytes);
+			}
+		}											
 	}
 }
