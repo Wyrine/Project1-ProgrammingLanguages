@@ -38,7 +38,7 @@ public class Instruction : IInstruction
 		private static Dictionary<string, Func< Instruction, uint> > FUNCS =
 				new Dictionary<string, Func<Instruction, uint> >() 
 				{
-						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? Convert.ToUInt32(inst[0]) : 0);}}, 
+						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? Convert.ToInt32(inst[0]) : 0);}}, 
 						{"swap", (inst) => { return (uint)1 << 24; }}, 
 						{"inpt", (inst) => { return (uint)2 << 24; }},
 						{"nop", (inst) => { return (uint)3 << 24; }}, 
@@ -53,17 +53,17 @@ public class Instruction : IInstruction
 						{"xor", (inst) => { return (uint)0x27 << 24; }}, 
 						{"neg", (inst) => { return (uint) 3 << 28; }}, 
 						{"not", (inst) => { return (uint) 0x31 << 24; }},
-						{"goto", (inst) => { return (~((uint) 8 << 28)) & Convert.ToUInt32(inst[0]); }},   
+						{"goto", (inst) => { return (~((uint) 8 << 28)) & ((7 << 28) | Convert.ToInt32(inst[0])); }},   
 						{"dup", (inst) => 
 								{ 
-										uint relOffset = (inst.Count == 0) ? 0 : Convert.ToUInt32(inst[0]);
+										uint relOffset = (inst.Count == 0) ? 0 : Convert.ToInt32(inst[0]);
 										return ((uint) 9 << 28) | (relOffset << 2);
 								}},
 						{"print", (inst) => { return (uint) 13 << 28; }}, 
 						{"dump", (inst) => { return (uint) 0xe << 28; }}, 
 						{"push", (inst) => 
 								{
-										uint valToPush = (inst.Count == 0 ) ? 0 : Convert.ToUInt32(inst[0]);
+										uint valToPush = (inst.Count == 0 ) ? 0 : Convert.ToInt32(inst[0]);
 										return ((uint) 0xf << 29) | valToPush;
 								}}
 				};
@@ -139,6 +139,6 @@ public class Instruction : IInstruction
 								break;
 				}
 				//return the byte
-				return (opcode << 28) | (cond << 24) | Convert.ToUInt32(mArgs[0]) ;
+				return (opcode << 28) | (cond << 24) | Convert.ToInt32(mArgs[0]) ;
 		}
 }
