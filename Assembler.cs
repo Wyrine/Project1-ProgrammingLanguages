@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 
 public class Assembler{
-	public Dictionary<string,uint> LabelD = new Dictionary<string,uint>();
+	public Dictionary<string,Label> LabelD = new Dictionary<string,Label>();
 	public List<Instruction> IL = new List<Instruction>();
 	public List<string[]> StrArrayList = new List<string[]>();
 	private uint offset = 0;
@@ -31,7 +31,10 @@ public class Assembler{
 					// IF HERE STRING CONTAINS A NEW LABEL
 					if(line.IndexOf(":") > 0){
 						line = line.Split(':')[0];
-						LabelD.Add(line,offset);
+						
+						// MAKE NEW LABEL INSTANCE //
+						
+						LabelD.Add(line,new Label(line,offset));
 					}
 		
 					// IF HERE STRING CONTAINS A NEW INSTRUCTION
@@ -39,7 +42,6 @@ public class Assembler{
 						// split string into string array containing instruction and its possible arguments
 						string[] prgs = line.Split(new char[]{' ','\t'},StringSplitOptions.RemoveEmptyEntries);
 		
-						//IL.Add(new Instruction(prgs));
 						StrArrayList.Add(prgs);
 						offset += 4;
 					}
@@ -51,9 +53,9 @@ public class Assembler{
 		// with the address offset from the label dictionary
 		foreach(string[] StrArr in StrArrayList){
 			for(var i = 0; i < StrArr.Length; i++){
-				uint val = 0;
-				if(LabelD.TryGetValue(StrArr[i],out val)){
-					StrArr[i] = val.ToString();
+				Label lval;
+				if(LabelD.TryGetValue(StrArr[i],out lval)){
+					StrArr[i] = lval.Offset.ToString();
 				}
 				else if(StrArr[i].IndexOf("0x") == 0){
 					StrArr[i] = Convert.ToUInt32(StrArr[i],16).ToString();
