@@ -38,7 +38,7 @@ public class Instruction : IInstruction
 		private static Dictionary<string, Func< Instruction, uint> > FUNCS =
 				new Dictionary<string, Func<Instruction, uint> >() 
 				{
-						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? Convert.ToInt32(inst[0]) : 0);}}, 
+						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? Convert.ToUInt32(inst[0]) : 0);}}, 
 						{"swap", (inst) => { return (uint)1 << 24; }}, 
 						{"inpt", (inst) => { return (uint)2 << 24; }},
 						{"nop", (inst) => { return (uint)3 << 24; }}, 
@@ -53,18 +53,18 @@ public class Instruction : IInstruction
 						{"xor", (inst) => { return (uint)0x27 << 24; }}, 
 						{"neg", (inst) => { return (uint) 3 << 28; }}, 
 						{"not", (inst) => { return (uint) 0x31 << 24; }},
-						{"goto", (inst) => { return (~((uint) 8 << 28)) & ((7 << 28) | Convert.ToInt32(inst[0])); }},   
+						{"goto", (inst) => { return (~((uint) 8 << 28)) & ((7 << 28) | Convert.ToUInt32(inst[0])); }},   
 						{"dup", (inst) => 
 								{ 
-										uint relOffset = (inst.Count == 0) ? 0 : Convert.ToInt32(inst[0]);
+										uint relOffset = (inst.Count == 0) ? 0 : Convert.ToUInt32(inst[0]);
 										return ((uint) 9 << 28) | (relOffset << 2);
 								}},
 						{"print", (inst) => { return (uint) 13 << 28; }}, 
 						{"dump", (inst) => { return (uint) 0xe << 28; }}, 
 						{"push", (inst) => 
 								{
-										uint valToPush = (inst.Count == 0 ) ? 0 : Convert.ToInt32(inst[0]);
-										return ((uint) 0xf << 29) | valToPush;
+										uint valToPush = (inst.Count == 0 ) ? 0 : (uint) Convert.ToInt32(inst[0]);
+										return ((uint) 0xf << 28) | valToPush;
 								}}
 				};
 
@@ -81,11 +81,11 @@ public class Instruction : IInstruction
 				get
 				{ 
 						//calls the if function;
-						if(mName.Substring(0, 2) == "if") 
-								return if_block();
-
+						if(mName.Substring(0, 2) == "if")
+							return if_block();
+						
 						//if the key is not in the dictionary throw an error
-						if(! FUNCS.ContainsKey(mName)) 
+						if(! FUNCS.ContainsKey(mName))
 								throw new KeyNotFoundException();
 
 						//otherwise call the dictionary method and return what it returns
@@ -97,41 +97,41 @@ public class Instruction : IInstruction
 		private uint if_block()
 		{
 				//get the condition
-				string tmp = mName.Substring(2, 4);
+				//string tmp = mName.Substring(2, 4);
 				uint cond = 0;
 				uint opcode = 8;
 				//get the proper opcode and condition
-				switch(tmp)
+				switch(mName)
 				{
-						case "eq":
+						case "ifeq":
 								break;
-						case "ne":
+						case "ifne":
 								cond = 1;
 								break;
-						case "lt":
+						case "iflt":
 								cond = 2;
 								break;
-						case "gt":
+						case "ifgt":
 								cond = 3;
 								break;
-						case "le":
+						case "ifle":
 								cond = 4;
 								break;
-						case "ge":
+						case "ifge":
 								cond = 5;
 								break;
-						case "ez":
+						case "ifez":
 								opcode++;
 								break;
-						case "nz":
+						case "ifnz":
 								opcode++;
 								cond = 1;
 								break;
-						case "mi":
+						case "ifmi":
 								opcode++;
 								cond = 2;
 								break;
-						case "pl":
+						case "ifpl":
 								opcode++;
 								cond = 3;
 								break;
@@ -139,6 +139,6 @@ public class Instruction : IInstruction
 								break;
 				}
 				//return the byte
-				return (opcode << 28) | (cond << 24) | Convert.ToInt32(mArgs[0]) ;
+				return (opcode << 28) | (cond << 24) | Convert.ToUInt32(mArgs[0]) ;
 		}
 }

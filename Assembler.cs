@@ -52,7 +52,7 @@ public class Assembler{
 		//Second Pass replaces labels found in instructions
 		// with the address offset from the label dictionary
 		foreach(string[] StrArr in StrArrayList){
-			for(var i = 0; i < StrArr.Length; i++){
+			for(var i = 1; i < StrArr.Length; i++){
 				Label lval;
 				if(LabelD.TryGetValue(StrArr[i],out lval)){
 					StrArr[i] = lval.Offset.ToString();
