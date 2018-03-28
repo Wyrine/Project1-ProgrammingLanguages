@@ -39,7 +39,7 @@ public class Instruction : IInstruction
 		private static Dictionary<string, Func< Instruction, uint> > FUNCS =
 				new Dictionary<string, Func<Instruction, uint> >() 
 				{
-						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? (uint)Convert.ToInt32(inst[0]) : 0);}}, 
+						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? 0xff & (uint)Convert.ToInt32(inst[0]) : 0);}}, 
 						{"swap", (inst) => { return (uint)1 << 24; }}, 
 						{"inpt", (inst) => { return (uint)2 << 24; }},
 						{"nop", (inst) => { return (uint)3 << 24; }}, 
@@ -56,7 +56,7 @@ public class Instruction : IInstruction
 						{"not", (inst) => { return (uint) 0x31 << 24; }},
 						{"goto", (inst) => 
 								{ 
-										int relOffset = Convert.ToInt32(inst[0]) - (int) inst.Address;
+										int relOffset = 0xfffffff & (Convert.ToInt32(inst[0]) - (int) inst.Address);
 										return (~((uint) 8 << 28)) & ((7 << 28) | (uint) relOffset); 
 								}},   
 						{"dup", (inst) => 
