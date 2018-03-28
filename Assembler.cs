@@ -49,22 +49,28 @@ public class Assembler{
 			}
 		}
 
-		//Second Pass replaces labels found in instructions
-		// with the address offset from the label dictionary
+		// Second Pass through instructions
 		foreach(KeyValuePair<uint,string[]> kvp in StrArrayList){
 			for(var i = 1; i < kvp.Value.Length; i++){
 				Label lval;
+				
+				// Replace label arguments with their offset
 				if(LabelD.TryGetValue(kvp.Value[i],out lval)){
 					kvp.Value[i] = lval.Offset.ToString();
 				}
+
+				// If argument is in hex replace with decimal value
 				else if(kvp.Value[i].IndexOf("0x") == 0){
 					kvp.Value[i] = Convert.ToUInt32(kvp.Value[i],16).ToString();
 				}
 			}
+
+			// Create new instance of an instruction and put into list
 			IL.Add(new Instruction(kvp.Key, kvp.Value));
 		}
 	}
 
+	// Writes the "magic header" and then all of the instructions
 	public void WriteOutput(){
 		using(BinaryWriter bw = new BinaryWriter(File.Open(filename+".out",FileMode.Create))) {
 			bw.Write(0xefbeedfe);
