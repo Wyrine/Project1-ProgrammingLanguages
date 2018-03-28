@@ -59,7 +59,9 @@ public class Instruction : IInstruction
 			{"xor", (inst) => { return (uint)0x27 << 24; }}, 
 			{"neg", (inst) => { return (uint) 3 << 28; }}, 
 			{"not", (inst) => { return (uint) 0x31 << 24; }},
-			{"goto", (inst) => { return (~((uint) 8 << 28)) & ((7 << 28) | Convert.ToUInt32(inst[0])); }},   
+			{"goto", (inst) => { 
+					int relOffset = Convert.ToInt32(inst[0]) - (int) inst.Address;
+					return (~((uint) 8 << 28)) & ((7 << 28) | (uint) relOffset); }},   
 			{"dup", (inst) => 
 				{ 
 					uint relOffset = (inst.Count == 0) ? 0 : Convert.ToUInt32(inst[0]);
@@ -107,6 +109,7 @@ public class Instruction : IInstruction
 		//string tmp = mName.Substring(2, 4);
 		uint cond = 0;
 		uint opcode = 8;
+		int relOffset = Convert.ToInt32(mArgs[0]) - (int) Address;
 		//get the proper opcode and condition
 		switch(mName)
 		{
@@ -146,6 +149,6 @@ public class Instruction : IInstruction
 				break;
 		}
 		//return the byte
-		return (opcode << 28) | (cond << 24) | (uint) Convert.ToInt32(mArgs[0]) ;
+		return (opcode << 28) | (cond << 24) | (uint) relOffset ;
 	}
 }
