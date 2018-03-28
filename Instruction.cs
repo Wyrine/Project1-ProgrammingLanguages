@@ -39,7 +39,7 @@ public class Instruction : IInstruction
 		private static Dictionary<string, Func< Instruction, uint> > FUNCS =
 				new Dictionary<string, Func<Instruction, uint> >() 
 				{
-						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? Convert.ToUInt32(inst[0]) : 0);}}, 
+						{"exit", (inst) => { return (uint)0xff & ((inst.Count > 0) ? (uint)Convert.ToInt32(inst[0]) : 0);}}, 
 						{"swap", (inst) => { return (uint)1 << 24; }}, 
 						{"inpt", (inst) => { return (uint)2 << 24; }},
 						{"nop", (inst) => { return (uint)3 << 24; }}, 
