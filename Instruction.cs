@@ -57,7 +57,7 @@ public class Instruction : IInstruction
 						{"dup", (inst) => 
 								{ 
 										uint relOffset = (inst.Count == 0) ? 0 : Convert.ToUInt32(inst[0]);
-										return ((uint) 12 << 28) | (relOffset << 2);
+										return  ~((uint) 3 << 28) & (relOffset << 2);
 								}},
 						{"print", (inst) => { return (uint) 13 << 28; }}, 
 						{"dump", (inst) => { return (uint) 0xe << 28; }}, 
