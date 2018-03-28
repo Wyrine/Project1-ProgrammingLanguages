@@ -20,6 +20,7 @@ using System.Collections.Generic;
 public class Instruction : IInstruction
 {
 		public readonly string mName;
+		public readonly uint Address;
 		private List<string> mArgs = new List<string>();
 
 		//return the mArgs value at index i
@@ -68,10 +69,11 @@ public class Instruction : IInstruction
 								}}
 				};
 
-		public Instruction(string[] _args)
+		public Instruction(uint _addr, string[] _args)
 		{
 				//first argument is the name
 				mName = _args[0];
+				Address = _addr;
 				//the rest, if they exist, are the arguments
 				for(var i = 1; i < _args.Length; i++)
 						mArgs.Add(_args[i]);
