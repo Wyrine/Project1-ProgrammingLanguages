@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Assembler{
 	public Dictionary<string,Label> LabelD = new Dictionary<string,Label>();
 	public List<Instruction> IL = new List<Instruction>();
-	public List<string[]> StrArrayList = new List<string[]>();
+	public Dictionary<uint,string[]> StrArrayList = new Dictionary<uint,string[]>();
 	private uint offset = 0;
 	private string filename;
 
@@ -42,7 +42,7 @@ public class Assembler{
 						// split string into string array containing instruction and its possible arguments
 						string[] prgs = line.Split(new char[]{' ','\t'},StringSplitOptions.RemoveEmptyEntries);
 		
-						StrArrayList.Add(prgs);
+						StrArrayList.Add(offset,prgs);
 						offset += 4;
 					}
 				}
@@ -51,17 +51,17 @@ public class Assembler{
 
 		//Second Pass replaces labels found in instructions
 		// with the address offset from the label dictionary
-		foreach(string[] StrArr in StrArrayList){
-			for(var i = 1; i < StrArr.Length; i++){
+		foreach(KeyValuePair<uint,string[]> kvp in StrArrayList){
+			for(var i = 1; i < kvp.Value.Length; i++){
 				Label lval;
-				if(LabelD.TryGetValue(StrArr[i],out lval)){
-					StrArr[i] = lval.Offset.ToString();
+				if(LabelD.TryGetValue(kvp.Value[i],out lval)){
+					kvp.Value[i] = lval.Offset.ToString();
 				}
-				else if(StrArr[i].IndexOf("0x") == 0){
-					StrArr[i] = Convert.ToUInt32(StrArr[i],16).ToString();
+				else if(kvp.Value[i].IndexOf("0x") == 0){
+					kvp.Value[i] = Convert.ToUInt32(kvp.Value[i],16).ToString();
 				}
 			}
-			IL.Add(new Instruction(StrArr));
+			IL.Add(new Instruction(kvp.Key, kvp.Value));
 		}
 	}
 
