@@ -65,7 +65,7 @@ public class Instruction : IInstruction
 			{"dup", (inst) => 
 				{ 
 					uint relOffset = (inst.Count == 0) ? 0 : Convert.ToUInt32(inst[0]);
-					return  ~((uint) 3 << 28) & (relOffset << 2);
+					return  ((uint) 0xc << 28) | (0xfffffff & (relOffset << 2));
 				}},
 			{"print", (inst) => { return (uint) 13 << 28; }}, 
 			{"dump", (inst) => { return (uint) 0xe << 28; }}, 
@@ -105,11 +105,9 @@ public class Instruction : IInstruction
 	//the if instruction
 	private uint if_block()
 	{
-		//get the condition
-		//string tmp = mName.Substring(2, 4);
 		uint cond = 0;
 		uint opcode = 8;
-		int relOffset = Convert.ToInt32(mArgs[0]) - (int) Address;
+		int relOffset = Convert.ToInt32(mArgs[0]) - ((int) Address);
 		//get the proper opcode and condition
 		switch(mName)
 		{
@@ -149,6 +147,6 @@ public class Instruction : IInstruction
 				break;
 		}
 		//return the byte
-		return (opcode << 28) | (cond << 24) | (uint) relOffset ;
+		return (opcode << 28) | (cond << 24) | ((uint)0xffffff & (uint) relOffset) ;
 	}
 }

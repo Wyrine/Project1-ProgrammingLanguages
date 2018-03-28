@@ -4,4 +4,4 @@ Assembler.exe: *.cs
 		mcs -out:Assembler.exe *.cs
 
 clean:
-		rm -rf *.exe
+		rm -rf *.exe *.out
